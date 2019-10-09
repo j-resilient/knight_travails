@@ -2,6 +2,10 @@ class PolyTreeNode
     attr_reader :parent, :children, :value
     attr_writer :parent, :children
 
+    def inspect
+        { 'value' => @value, 'parent' => @parent.value }.inspect
+    end
+
     def initialize(value)
         @value = value
         @parent = nil
@@ -22,5 +26,17 @@ class PolyTreeNode
         raise "#{child_node.value} is not a child of #{@value}" if !@children.include?(child_node)
         child_node.parent = nil
     end
+
+    def dfs(target)
+        return self if @value == target
+
+        @children.each do |child|
+            search_result = child.dfs(target)
+            return search_result unless search_result.nil?
+        end
+
+        nil
+    end
+    
 end
 
