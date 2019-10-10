@@ -2,7 +2,8 @@ require_relative 'skeleton/lib/00_tree_node'
 class KnightPathFinder
     def initialize(start_pos)
         # @root = build_move_tree(start_pos)
-        print valid_moves(start_pos)
+        @considered_positions = [start_pos]
+        print new_move_positions(start_pos)
     end
 
     def valid_moves(pos)
@@ -19,6 +20,12 @@ class KnightPathFinder
             moves << [x, pos_y + y_addend] if (pos_y + y_addend).between?(0,7)
         end
 
+        moves
+    end
+
+    def new_move_positions(pos)
+        moves = valid_moves(pos).delete_if { |move| @considered_positions.include?(move) }
+        @considered_positions += moves
         moves
     end
 end
