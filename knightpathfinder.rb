@@ -1,9 +1,12 @@
 require_relative 'skeleton/lib/00_tree_node'
 class KnightPathFinder
+    attr_reader :start_pos
+
     def initialize(start_pos)
-        @root = PolyTreeNode.new(start_pos)
+        @start_pos = start_pos
         @considered_positions = [start_pos]
-        build_move_tree(@root)
+
+        build_move_tree
     end
 
     def valid_moves(pos)
@@ -24,13 +27,17 @@ class KnightPathFinder
     end
 
     def new_move_positions(pos)
-        moves = valid_moves(pos).delete_if { |move| @considered_positions.include?(move) }
+        moves = valid_moves(pos).reject { |move| @considered_positions.include?(move) }
         @considered_positions += moves
         moves
     end
 
-    def build_move_tree(start_pos)
-        queue = [start_pos]
+    attr_accessor :root, :considered_positions
+
+    def build_move_tree
+        self.root = PolyTreeNode.new(start_pos)
+
+        queue = [root]
         until queue.empty?
             node = queue.shift
             new_move_positions(node.value).each do |move|
@@ -54,24 +61,11 @@ class KnightPathFinder
         end
         path.reverse
     end
-
-    def print_tree
-        queue = [@root]
-        print "#{@root.value}\n"
-        until queue.empty?
-            node = queue.shift
-            print "#{node.value}:   "
-            node.children.each do |child| 
-                print "#{child.value} "
-                queue << child
-            end
-            puts
-        end
-    end
 end
 
 if __FILE__ == $PROGRAM_NAME
     knight = KnightPathFinder.new([0,0])
     knight.find_path([7,6])
+    puts
     knight.find_path([6,2])
 end
